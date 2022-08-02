@@ -1,4 +1,3 @@
-use std::any::Any;
 use std::collections::VecDeque;
 use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token::Token;
@@ -19,7 +18,7 @@ pub fn tokenize(code: String) -> Result<VecDeque<Token>, String> {
                     if let '0'..='9' = code.chars().nth(i).unwrap() {
                         s.push(code.chars().nth(i).unwrap());
                     } else {
-                        p = i;
+                        p = i - 1;
                         break;
                     }
                 }
