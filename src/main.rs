@@ -1,7 +1,9 @@
+use code_generator::code_exporter;
+
 mod arguments_handler;
 mod code_reader;
-mod code_exporter;
 mod tokenizer;
+mod code_generator;
 
 fn main() {
     let code_path = arguments_handler::get_code_path().unwrap();
