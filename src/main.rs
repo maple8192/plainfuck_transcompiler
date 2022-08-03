@@ -11,17 +11,4 @@ fn main() {
     let code = code_reader::read_content(code_path).unwrap();
 
     let mut tokens = tokenize(code).unwrap();
-
-    for _ in 0..tokens.len() {
-        let token = tokens.pop_front();
-
-        if let Some(t) = token {
-            match t.token_type {
-                TokenType::Reserved(_) => println!("Reserved"),
-                TokenType::Number(n) => println!("Number: {}", n),
-            }
-        } else {
-            println!("Error");
-        }
-    }
 }
