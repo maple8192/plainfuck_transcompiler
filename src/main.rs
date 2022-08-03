@@ -4,6 +4,7 @@ use crate::tokenizer::tokenizer::tokenize;
 mod arguments_handler;
 mod code_reader;
 mod tokenizer;
+mod code_generator;
 
 fn main() {
     let code_path = arguments_handler::get_code_path().unwrap();
