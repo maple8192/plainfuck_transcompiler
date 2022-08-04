@@ -1,3 +1,5 @@
+use crate::code_generator::code_exporter::export_code;
+use crate::code_generator::code_generator::generate_code;
 use crate::tokenizer::token_type::TokenType;
 use crate::tokenizer::tokenizer::tokenize;
 
@@ -10,5 +12,8 @@ fn main() {
     let code_path = arguments_handler::get_code_path().unwrap();
     let code = code_reader::read_content(code_path).unwrap();
 
-    let mut tokens = tokenize(code).unwrap();
+    let tokens = tokenize(code).unwrap();
+
+    let code_data = generate_code(tokens).unwrap();
+    export_code(code_data, "result.bf");
 }
