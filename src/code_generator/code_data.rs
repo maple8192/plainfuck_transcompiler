@@ -13,4 +13,14 @@ impl CodeData {
     pub fn add_command(&mut self, command: Command) {
         self.commands.push_back(command);
     }
+
+    pub fn consume_command(&mut self) -> Option<Command> {
+        let front = self.commands.pop_front();
+
+        if let Some(c) = front {
+            Some(c)
+        } else {
+            None
+        }
+    }
 }
