@@ -29,5 +29,7 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
         p += 1;
     }
 
+    queue.add(Token { token_type: TokenType::End });
+
     Ok(queue)
 }
