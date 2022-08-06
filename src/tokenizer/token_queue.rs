@@ -16,18 +16,18 @@ impl TokenQueue {
         self.tokens.push_back(token);
     }
 
-    pub fn consume_reserved_token(&mut self, request: ReservedToken) ->Result<(), ()> {
+    pub fn consume_reserved_token(&mut self, request: ReservedToken) ->Result<bool, ()> {
         let front = self.tokens.front();
 
         if let Some(token) = front {
             if let TokenType::Reserved(t) = &token.token_type {
                 if t == &request {
                     self.tokens.pop_front();
-                    return Ok(());
+                    return Ok(true);
                 }
             }
 
-            Err(())
+            Ok(false)
         } else {
             Err(())
         }
