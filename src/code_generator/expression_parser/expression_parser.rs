@@ -16,27 +16,31 @@ impl ExpressionParser {
     }
 
     fn add(&mut self) -> Expression {
-        let lhs = self.mul();
+        let mut node = self.mul();
 
-        if self.expr.consume_reserved_token(ReservedToken::Add).unwrap() {
-            return Expression::Add(Box::new(lhs), Box::new(self.add()));
-        } else if self.expr.consume_reserved_token(ReservedToken::Sub).unwrap() {
-            return Expression::Sub(Box::new(lhs), Box::new(self.add()));
+        loop {
+            if self.expr.consume_reserved_token(ReservedToken::Add).unwrap() {
+                node = Expression::Add(Box::new(node), Box::new(self.mul()));
+            } else if self.expr.consume_reserved_token(ReservedToken::Sub).unwrap() {
+                node = Expression::Sub(Box::new(node), Box::new(self.mul()));
+            } else {
+                return node;
+            }
         }
-
-        lhs
     }
 
     fn mul(&mut self) -> Expression {
-        let lhs = self.primary();
+        let mut node = self.primary();
 
-        if self.expr.consume_reserved_token(ReservedToken::Mul).unwrap() {
-            return Expression::Mul(Box::new(lhs), Box::new(self.mul()));
-        } else if self.expr.consume_reserved_token(ReservedToken::Div).unwrap() {
-            return Expression::Div(Box::new(lhs), Box::new(self.mul()));
+        loop {
+            if self.expr.consume_reserved_token(ReservedToken::Mul).unwrap() {
+                node = Expression::Mul(Box::new(node), Box::new(self.primary()));
+            } else if self.expr.consume_reserved_token(ReservedToken::Div).unwrap() {
+                node = Expression::Div(Box::new(node), Box::new(self.primary()));
+            } else {
+                return node;
+            }
         }
-
-        lhs
     }
 
     fn primary(&mut self) -> Expression {
