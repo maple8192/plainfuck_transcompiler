@@ -1,13 +1,13 @@
 use std::collections::vec_deque::VecDeque;
 use crate::code_generator::command::Command;
 
-pub struct CodeData {
+pub struct CommandQueue {
     commands: VecDeque<Command>,
 }
 
-impl CodeData {
+impl CommandQueue {
     pub fn new() -> Self {
-        CodeData { commands: VecDeque::new() }
+        CommandQueue { commands: VecDeque::new() }
     }
 
     pub fn add_command(&mut self, command: Command) {

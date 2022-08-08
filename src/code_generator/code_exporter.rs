@@ -1,16 +1,16 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
-use crate::code_generator::code_data::CodeData;
+use crate::code_generator::command_queue::CommandQueue;
 use crate::code_generator::command::Command;
 
-pub fn export_code<T: AsRef<Path>>(code_data: CodeData, path: T) {
+pub fn export_code<T: AsRef<Path>>(code_data: CommandQueue, path: T) {
     let code_str = stringify_code(code_data);
 
     export_code_file(path, code_str);
 }
 
-fn stringify_code(mut code_data: CodeData) -> String {
+fn stringify_code(mut code_data: CommandQueue) -> String {
     let mut code = String::new();
 
     loop {
