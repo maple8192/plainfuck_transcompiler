@@ -1,22 +1,38 @@
-use crate::code_generator::code_data::CodeData;
 use crate::code_generator::command::Command;
-use crate::tokenizer::reserved_token::ReservedToken;
+use crate::code_generator::command_queue::CommandQueue;
+use crate::code_generator::expression_parser::expression::Expression;
+use crate::code_generator::expression_parser::expression_parser::ExpressionParser;
 use crate::tokenizer::token_queue::TokenQueue;
 
-pub fn generate_code(mut queue: TokenQueue) -> Result<CodeData, ()> {
-    let mut code_data = CodeData::new();
+pub fn generate_code(mut queue: TokenQueue) -> CommandQueue {
+    let expr = ExpressionParser::new(queue).parse();
 
-    code_data.add_command(Command::Add(queue.consume_number_token().unwrap()));
+    let mut command_queue = CommandQueue::new();
 
-    while !queue.is_end() {
-        if queue.consume_reserved_token(ReservedToken::Add).is_ok() {
-            code_data.add_command(Command::Add(queue.consume_number_token().unwrap()));
-        } else if queue.consume_reserved_token(ReservedToken::Sub).is_ok() {
-            code_data.add_command(Command::Sub(queue.consume_number_token().unwrap()));
-        } else {
-            panic!("");
+    expr_to_command(command_queue, &expr)
+}
+
+fn expr_to_command(mut command_queue: CommandQueue, expr: &Expression) -> CommandQueue {
+    if let &Expression::Number(n) = expr {
+        command_queue.add_command(Command::Push(n));
+        return command_queue;
+    }
+
+    if let &Expression::Add(a, b) |
+           &Expression::Sub(a, b) |
+           &Expression::Mul(a, b) |
+           &Expression::Div(a, b) = expr {
+        command_queue = expr_to_command(command_queue, a.as_ref());
+        command_queue = expr_to_command(command_queue, b.as_ref());
+
+        match expr {
+            &Expression::Add(_, _) => command_queue.add_command(Command::Add),
+            &Expression::Sub(_, _) => command_queue.add_command(Command::Sub),
+            &Expression::Mul(_, _) => command_queue.add_command(Command::Mul),
+            &Expression::Div(_, _) => command_queue.add_command(Command::Div),
+            _ => (),
         }
     }
 
-    Ok(code_data)
+    command_queue
 }
