@@ -1,4 +1,7 @@
 pub enum Command {
-    Add(u32),
-    Sub(u32),
+    Push(u32),
+    Add,
+    Sub,
+    Mul,
+    Div,
 }
