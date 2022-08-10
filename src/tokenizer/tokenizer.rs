@@ -12,6 +12,10 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
             ' ' | '\n' | '\r' | '\t' => (),
             '+' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Add) }),
             '-' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Sub) }),
+            '*' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Mul) }),
+            '/' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Div) }),
+            '(' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::OpenBracket) }),
+            ')' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::CloseBracket) }),
             '0'..='9' => {
                 let mut s = String::from(code.chars().nth(p).unwrap());
                 for i in (p + 1)..code.len() {

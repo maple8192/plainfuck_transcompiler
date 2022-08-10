@@ -14,6 +14,6 @@ fn main() {
 
     let tokens = tokenize(code).unwrap();
 
-    let code_data = generate_code(tokens).unwrap();
+    let code_data = generate_code(tokens);
     export_code(code_data, "result.bf");
 }

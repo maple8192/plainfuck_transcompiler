@@ -1,28 +1,28 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
-use crate::code_generator::code_data::CodeData;
-use crate::code_generator::command::Command;
+use crate::code_generator::bf_token::BFToken;
+use crate::code_generator::bf_token_queue::BFTokenQueue;
 
-pub fn export_code<T: AsRef<Path>>(code_data: CodeData, path: T) {
-    let code_str = stringify_code(code_data);
+pub fn export_code<T: AsRef<Path>>(token_queue: BFTokenQueue, path: T) {
+    let code_str = stringify_code(token_queue);
 
     export_code_file(path, code_str);
 }
 
-fn stringify_code(mut code_data: CodeData) -> String {
+fn stringify_code(mut queue: BFTokenQueue) -> String {
     let mut code = String::new();
 
-    loop {
-        let command = code_data.consume_command();
-
-        if let Some(command) = command {
-            match command {
-                Command::Add(n) => for _ in 0..n { code.push('+'); }
-                Command::Sub(n) => for _ in 0..n { code.push('-'); }
-            }
-        } else {
-            break;
+    while let Some(token) = queue.consume_token() {
+        match token {
+            BFToken::Add(n) => for _ in 0..n { code.push('+'); }
+            BFToken::Sub(n) => for _ in 0..n { code.push('-'); }
+            BFToken::IncPtr(n) => for _ in 0..n { code.push('>'); }
+            BFToken::DecPtr(n) => for _ in 0..n { code.push('<'); }
+            BFToken::LoopIn => code.push('['),
+            BFToken::LoopOut => code.push(']'),
+            BFToken::Print => code.push('.'),
+            BFToken::Read => code.push(','),
         }
     }
 
