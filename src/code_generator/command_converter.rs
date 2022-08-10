@@ -26,6 +26,7 @@ impl CommandConverter {
                 Command::Sub => self.sub(&mut tokens),
                 Command::Mul => self.mul(&mut tokens),
                 Command::Div => self.div(&mut tokens),
+                Command::Print => self.print(&mut tokens),
             }
         }
 
@@ -165,6 +166,152 @@ impl CommandConverter {
 
         self.stack.push_back(temp3);
         self.new_address += 4;
+    }
+
+    fn print(&mut self, tokens: &mut BFTokenQueue) {
+        let target = self.stack.pop_back().unwrap();
+        let temp = self.new_address;
+
+        self.move_pointer(tokens, target);
+        tokens.add_token(BFToken::LoopIn);
+        self.move_pointer(tokens, temp);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, target);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp);
+
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::Add(10));
+        tokens.add_token(BFToken::DecPtr(2));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(6));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(3));
+        tokens.add_token(BFToken::Add(10));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(5));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(2));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(6));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Add(8));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Print);
+        tokens.add_token(BFToken::DecPtr(2));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::Add(6));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Add(8));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::Print);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(2));
+        tokens.add_token(BFToken::Add(6));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Add(8));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Print);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(2));
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::DecPtr(1));
+        tokens.add_token(BFToken::Add(1));
+        tokens.add_token(BFToken::IncPtr(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::DecPtr(1));
+        self.current_pointer = temp;
+
+        self.new_address += 1;
     }
 
     fn move_pointer(&mut self, tokens: &mut BFTokenQueue, address: u32) {
