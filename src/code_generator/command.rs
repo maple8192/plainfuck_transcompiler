@@ -4,4 +4,5 @@ pub enum Command {
     Sub,
     Mul,
     Div,
+    Print,
 }
