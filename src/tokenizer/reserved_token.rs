@@ -6,4 +6,10 @@ pub enum ReservedToken {
     Div,
     OpenBracket,
     CloseBracket,
+    Equal,
+    NotEqual,
+    Less,
+    LessOrEqual,
+    Greater,
+    GreaterOrEqual,
 }
