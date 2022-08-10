@@ -12,6 +12,7 @@ pub fn generate_code(queue: TokenQueue) -> BFTokenQueue {
     let mut command_queue = CommandQueue::new();
 
     command_queue = expr_to_command(command_queue, &expr);
+    command_queue.add_command(Command::Print);
 
     CommandConverter::new(command_queue).convert()
 }
