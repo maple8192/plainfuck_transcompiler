@@ -1,15 +1,17 @@
 pub enum Expression {
-    Add(Box<Expression>, Box<Expression>),
-    Sub(Box<Expression>, Box<Expression>),
-    Mul(Box<Expression>, Box<Expression>),
-    Div(Box<Expression>, Box<Expression>),
-    Equality(Box<Expression>, Box<Expression>),
-    Relational(Box<Expression>, Box<Expression>),
-    Equal(Box<Expression>, Box<Expression>),
-    NotEqual(Box<Expression>, Box<Expression>),
-    Less(Box<Expression>, Box<Expression>),
-    LessOrEqual(Box<Expression>, Box<Expression>),
-    Greater(Box<Expression>, Box<Expression>),
-    GreaterOrEqual(Box<Expression>, Box<Expression>),
+    BinaryOperator(BinaryOperatorType, Box<Expression>, Box<Expression>),
     Number(u32),
+}
+
+pub enum BinaryOperatorType {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Equal,
+    NotEqual,
+    Less,
+    LessOrEqual,
+    Greater,
+    GreaterOrEqual,
 }
