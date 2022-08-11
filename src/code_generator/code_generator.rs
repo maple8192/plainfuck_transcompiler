@@ -44,8 +44,8 @@ fn expr_to_command(mut command_queue: CommandQueue, expr: &Expression) -> Comman
             &Expression::Equal(_, _) => command_queue.add_command(Command::Equal),
             &Expression::NotEqual(_, _) => { command_queue.add_command(Command::Equal); command_queue.add_command(Command::Not); }
             &Expression::Less(_, _) => command_queue.add_command(Command::Less),
-            &Expression::LessOrEqual(_, _) => command_queue.add_command(Command::LessOrEqual),
-            &Expression::Greater(_, _) => { command_queue.add_command(Command::LessOrEqual); command_queue.add_command(Command::Not); }
+            &Expression::LessOrEqual(_, _) => { command_queue.add_command(Command::Greater); command_queue.add_command(Command::Not); }
+            &Expression::Greater(_, _) => command_queue.add_command(Command::Greater),
             &Expression::GreaterOrEqual(_, _) => { command_queue.add_command(Command::Less); command_queue.add_command(Command::Not); }
             _ => (),
         }

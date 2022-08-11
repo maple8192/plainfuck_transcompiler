@@ -7,6 +7,6 @@ pub enum Command {
     Not,
     Equal,
     Less,
-    LessOrEqual,
+    Greater,
     Print,
 }
