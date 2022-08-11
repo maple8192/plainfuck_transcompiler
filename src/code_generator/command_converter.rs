@@ -26,6 +26,10 @@ impl CommandConverter {
                 Command::Sub => self.sub(&mut tokens),
                 Command::Mul => self.mul(&mut tokens),
                 Command::Div => self.div(&mut tokens),
+                Command::Not => self.not(&mut tokens),
+                Command::Equal => self.equal(&mut tokens),
+                Command::Less => self.less(&mut tokens),
+                Command::Greater => self.greater(&mut tokens),
                 Command::Print => self.print(&mut tokens),
             }
         }
@@ -166,6 +170,149 @@ impl CommandConverter {
 
         self.stack.push_back(temp3);
         self.new_address += 4;
+    }
+
+    fn not(&mut self, tokens: &mut BFTokenQueue) {
+        let target = self.stack.pop_back().unwrap();
+        let temp = self.new_address;
+
+        self.move_pointer(tokens, temp);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, target);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, target);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, target);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, temp);
+        tokens.add_token(BFToken::LoopOut);
+
+        self.stack.push_back(target);
+    }
+
+    fn equal(&mut self, tokens: &mut BFTokenQueue) {
+        let second = self.stack.pop_back().unwrap();
+        let first = self.stack.pop_back().unwrap();
+
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::LoopIn);
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        tokens.add_token(BFToken::LoopOut);
+
+        self.stack.push_back(first);
+    }
+
+    fn less(&mut self, tokens: &mut BFTokenQueue) {
+        let second = self.stack.pop_back().unwrap();
+        let first = self.stack.pop_back().unwrap();
+        let result = self.new_address;
+        let temp0 = self.new_address + 1;
+        let temp1 = self.new_address + 2;
+
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::LoopIn);
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, result);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+
+        self.stack.push_back(result);
+        self.new_address += 1;
+    }
+
+    fn greater(&mut self, tokens: &mut BFTokenQueue) {
+        let second = self.stack.pop_back().unwrap();
+        let first = self.stack.pop_back().unwrap();
+        let result = self.new_address;
+        let temp0 = self.new_address + 1;
+        let temp1 = self.new_address + 2;
+
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::LoopIn);
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, result);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, temp0);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::LoopIn);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::Add(1));
+        self.move_pointer(tokens, temp1);
+        tokens.add_token(BFToken::LoopOut);
+        self.move_pointer(tokens, second);
+        tokens.add_token(BFToken::Sub(1));
+        self.move_pointer(tokens, first);
+        tokens.add_token(BFToken::Sub(1));
+        tokens.add_token(BFToken::LoopOut);
+
+        self.stack.push_back(result);
+        self.new_address += 1;
     }
 
     fn print(&mut self, tokens: &mut BFTokenQueue) {

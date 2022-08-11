@@ -12,7 +12,39 @@ impl ExpressionParser {
     }
 
     pub fn parse(&mut self) -> Expression {
-        self.add()
+        self.equality()
+    }
+
+    fn equality(&mut self) -> Expression {
+        let mut node = self.relational();
+
+        loop {
+            if self.expr.consume_reserved_token(ReservedToken::Equal).unwrap() {
+                node = Expression::Equal(Box::new(node), Box::new(self.relational()));
+            } else if self.expr.consume_reserved_token(ReservedToken::NotEqual).unwrap() {
+                node = Expression::NotEqual(Box::new(node), Box::new(self.relational()));
+            } else {
+                return node;
+            }
+        }
+    }
+
+    fn relational(&mut self) -> Expression {
+        let mut node = self.add();
+
+        loop {
+            if self.expr.consume_reserved_token(ReservedToken::Less).unwrap() {
+                node = Expression::Less(Box::new(node), Box::new(self.add()));
+            } else if self.expr.consume_reserved_token(ReservedToken::LessOrEqual).unwrap() {
+                node = Expression::LessOrEqual(Box::new(node), Box::new(self.add()));
+            } else if self.expr.consume_reserved_token(ReservedToken::Greater).unwrap() {
+                node = Expression::Greater(Box::new(node), Box::new(self.add()));
+            } else if self.expr.consume_reserved_token(ReservedToken::GreaterOrEqual).unwrap() {
+                node = Expression::GreaterOrEqual(Box::new(node), Box::new(self.add()));
+            } else {
+                return node;
+            }
+        }
     }
 
     fn add(&mut self) -> Expression {
