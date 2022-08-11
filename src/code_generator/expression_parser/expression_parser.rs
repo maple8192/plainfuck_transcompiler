@@ -1,4 +1,4 @@
-use crate::code_generator::expression_parser::expression::Expression;
+use crate::code_generator::expression_parser::expression::{BinaryOperatorType, Expression};
 use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token_queue::TokenQueue;
 
@@ -20,9 +20,9 @@ impl ExpressionParser {
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Equal).unwrap() {
-                node = Expression::Equal(Box::new(node), Box::new(self.relational()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Equal, Box::new(node), Box::new(self.relational()));
             } else if self.expr.consume_reserved_token(ReservedToken::NotEqual).unwrap() {
-                node = Expression::NotEqual(Box::new(node), Box::new(self.relational()));
+                node = Expression::BinaryOperator(BinaryOperatorType::NotEqual, Box::new(node), Box::new(self.relational()));
             } else {
                 return node;
             }
@@ -34,13 +34,13 @@ impl ExpressionParser {
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Less).unwrap() {
-                node = Expression::Less(Box::new(node), Box::new(self.add()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Less, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::LessOrEqual).unwrap() {
-                node = Expression::LessOrEqual(Box::new(node), Box::new(self.add()));
+                node = Expression::BinaryOperator(BinaryOperatorType::LessOrEqual, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::Greater).unwrap() {
-                node = Expression::Greater(Box::new(node), Box::new(self.add()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Greater, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::GreaterOrEqual).unwrap() {
-                node = Expression::GreaterOrEqual(Box::new(node), Box::new(self.add()));
+                node = Expression::BinaryOperator(BinaryOperatorType::GreaterOrEqual, Box::new(node), Box::new(self.add()));
             } else {
                 return node;
             }
@@ -52,9 +52,9 @@ impl ExpressionParser {
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Add).unwrap() {
-                node = Expression::Add(Box::new(node), Box::new(self.mul()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Add, Box::new(node), Box::new(self.mul()));
             } else if self.expr.consume_reserved_token(ReservedToken::Sub).unwrap() {
-                node = Expression::Sub(Box::new(node), Box::new(self.mul()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Sub, Box::new(node), Box::new(self.mul()));
             } else {
                 return node;
             }
@@ -66,9 +66,9 @@ impl ExpressionParser {
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Mul).unwrap() {
-                node = Expression::Mul(Box::new(node), Box::new(self.primary()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Mul, Box::new(node), Box::new(self.primary()));
             } else if self.expr.consume_reserved_token(ReservedToken::Div).unwrap() {
-                node = Expression::Div(Box::new(node), Box::new(self.primary()));
+                node = Expression::BinaryOperator(BinaryOperatorType::Div, Box::new(node), Box::new(self.primary()));
             } else {
                 return node;
             }
