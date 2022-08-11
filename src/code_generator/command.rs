@@ -4,5 +4,9 @@ pub enum Command {
     Sub,
     Mul,
     Div,
+    Not,
+    Equal,
+    Less,
+    LessOrEqual,
     Print,
 }
