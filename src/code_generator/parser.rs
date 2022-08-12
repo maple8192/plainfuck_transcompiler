@@ -4,6 +4,7 @@ use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token_queue::TokenQueue;
 
 pub mod node;
+pub mod expression_queue;
 
 pub struct Parser {
     expr: TokenQueue,
