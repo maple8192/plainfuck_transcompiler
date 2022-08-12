@@ -1,4 +1,5 @@
-use crate::code_generator::expression_parser::node::{BinaryOperatorType, Node};
+use crate::code_generator::expression_parser::node::binary_operator_type::BinaryOperatorType;
+use crate::code_generator::expression_parser::node::Node;
 use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token_queue::TokenQueue;
 
