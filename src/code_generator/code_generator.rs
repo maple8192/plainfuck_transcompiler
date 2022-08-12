@@ -1,5 +1,3 @@
-use std::ops::Div;
-use crate::code_generator::bf_token_queue::BFTokenQueue;
 use crate::code_generator::command::Command;
 use crate::code_generator::command_converter::CommandConverter;
 use crate::code_generator::command_queue::CommandQueue;
@@ -7,7 +5,7 @@ use crate::code_generator::expression_parser::expression::{BinaryOperatorType, E
 use crate::code_generator::expression_parser::expression_parser::ExpressionParser;
 use crate::tokenizer::token_queue::TokenQueue;
 
-pub fn generate_code(queue: TokenQueue) -> BFTokenQueue {
+pub fn generate_code(queue: TokenQueue) -> String {
     let expr = ExpressionParser::new(queue).parse();
 
     let mut command_queue = CommandQueue::new();

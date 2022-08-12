@@ -12,8 +12,8 @@ fn main() {
     let code_path = arguments_handler::get_code_path().unwrap();
     let code = code_reader::read_content(code_path).unwrap();
 
-    let tokens = tokenize(code).unwrap();
+    let token_queue = tokenize(code).unwrap();
 
-    let code_data = generate_code(tokens);
-    export_code(code_data, "result.bf");
+    let result = generate_code(token_queue);
+    export_code(result, "result.bf");
 }
