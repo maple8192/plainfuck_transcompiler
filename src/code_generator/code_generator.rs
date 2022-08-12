@@ -1,7 +1,7 @@
 use crate::code_generator::command::Command;
 use crate::code_generator::command_converter::CommandConverter;
 use crate::code_generator::command_queue::CommandQueue;
-use crate::code_generator::expression_parser::expression::{BinaryOperatorType, Expression};
+use crate::code_generator::expression_parser::node::{BinaryOperatorType, Node};
 use crate::code_generator::expression_parser::expression_parser::ExpressionParser;
 use crate::tokenizer::token_queue::TokenQueue;
 
@@ -16,13 +16,13 @@ pub fn generate_code(queue: TokenQueue) -> String {
     CommandConverter::new(command_queue).convert()
 }
 
-fn expr_to_command(mut command_queue: CommandQueue, expr: &Expression) -> CommandQueue {
-    if let &Expression::Number(n) = expr {
+fn expr_to_command(mut command_queue: CommandQueue, expr: &Node) -> CommandQueue {
+    if let &Node::Number(n) = expr {
         command_queue.add_command(Command::Push(n));
         return command_queue;
     }
 
-    if let Expression::BinaryOperator(t, a, b) = expr {
+    if let Node::BinaryOperator(t, a, b) = expr {
         command_queue = expr_to_command(command_queue, a.as_ref());
         command_queue = expr_to_command(command_queue, b.as_ref());
 

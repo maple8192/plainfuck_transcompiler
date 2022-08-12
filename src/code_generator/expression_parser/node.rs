@@ -1,5 +1,5 @@
-pub enum Expression {
-    BinaryOperator(BinaryOperatorType, Box<Expression>, Box<Expression>),
+pub enum Node {
+    BinaryOperator(BinaryOperatorType, Box<Node>, Box<Node>),
     Number(u32),
 }
 

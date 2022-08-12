@@ -1,4 +1,4 @@
-use crate::code_generator::expression_parser::expression::{BinaryOperatorType, Expression};
+use crate::code_generator::expression_parser::node::{BinaryOperatorType, Node};
 use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token_queue::TokenQueue;
 
@@ -11,77 +11,77 @@ impl ExpressionParser {
         ExpressionParser { expr }
     }
 
-    pub fn parse(&mut self) -> Expression {
+    pub fn parse(&mut self) -> Node {
         self.equality()
     }
 
-    fn equality(&mut self) -> Expression {
+    fn equality(&mut self) -> Node {
         let mut node = self.relational();
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Equal).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Equal, Box::new(node), Box::new(self.relational()));
+                node = Node::BinaryOperator(BinaryOperatorType::Equal, Box::new(node), Box::new(self.relational()));
             } else if self.expr.consume_reserved_token(ReservedToken::NotEqual).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::NotEqual, Box::new(node), Box::new(self.relational()));
+                node = Node::BinaryOperator(BinaryOperatorType::NotEqual, Box::new(node), Box::new(self.relational()));
             } else {
                 return node;
             }
         }
     }
 
-    fn relational(&mut self) -> Expression {
+    fn relational(&mut self) -> Node {
         let mut node = self.add();
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Less).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Less, Box::new(node), Box::new(self.add()));
+                node = Node::BinaryOperator(BinaryOperatorType::Less, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::LessOrEqual).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::LessOrEqual, Box::new(node), Box::new(self.add()));
+                node = Node::BinaryOperator(BinaryOperatorType::LessOrEqual, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::Greater).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Greater, Box::new(node), Box::new(self.add()));
+                node = Node::BinaryOperator(BinaryOperatorType::Greater, Box::new(node), Box::new(self.add()));
             } else if self.expr.consume_reserved_token(ReservedToken::GreaterOrEqual).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::GreaterOrEqual, Box::new(node), Box::new(self.add()));
+                node = Node::BinaryOperator(BinaryOperatorType::GreaterOrEqual, Box::new(node), Box::new(self.add()));
             } else {
                 return node;
             }
         }
     }
 
-    fn add(&mut self) -> Expression {
+    fn add(&mut self) -> Node {
         let mut node = self.mul();
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Add).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Add, Box::new(node), Box::new(self.mul()));
+                node = Node::BinaryOperator(BinaryOperatorType::Add, Box::new(node), Box::new(self.mul()));
             } else if self.expr.consume_reserved_token(ReservedToken::Sub).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Sub, Box::new(node), Box::new(self.mul()));
+                node = Node::BinaryOperator(BinaryOperatorType::Sub, Box::new(node), Box::new(self.mul()));
             } else {
                 return node;
             }
         }
     }
 
-    fn mul(&mut self) -> Expression {
+    fn mul(&mut self) -> Node {
         let mut node = self.primary();
 
         loop {
             if self.expr.consume_reserved_token(ReservedToken::Mul).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Mul, Box::new(node), Box::new(self.primary()));
+                node = Node::BinaryOperator(BinaryOperatorType::Mul, Box::new(node), Box::new(self.primary()));
             } else if self.expr.consume_reserved_token(ReservedToken::Div).unwrap() {
-                node = Expression::BinaryOperator(BinaryOperatorType::Div, Box::new(node), Box::new(self.primary()));
+                node = Node::BinaryOperator(BinaryOperatorType::Div, Box::new(node), Box::new(self.primary()));
             } else {
                 return node;
             }
         }
     }
 
-    fn primary(&mut self) -> Expression {
+    fn primary(&mut self) -> Node {
         if self.expr.consume_reserved_token(ReservedToken::OpenBracket).unwrap() {
             let node = self.add();
             if !self.expr.consume_reserved_token(ReservedToken::CloseBracket).unwrap() { panic!(""); }
             return node;
         }
 
-        Expression::Number(self.expr.consume_number_token().unwrap())
+        Node::Number(self.expr.consume_number_token().unwrap())
     }
 }
