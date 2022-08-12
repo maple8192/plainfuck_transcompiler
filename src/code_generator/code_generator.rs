@@ -7,25 +7,27 @@ use crate::code_generator::parser::node::binary_operator_type::BinaryOperatorTyp
 use crate::tokenizer::token_queue::TokenQueue;
 
 pub fn generate_code(queue: TokenQueue) -> String {
-    let expr = Parser::new(queue).parse();
+    let mut expr_queue = Parser::new(queue).parse();
 
     let mut command_queue = CommandQueue::new();
 
-    command_queue = expr_to_command(command_queue, &expr);
-    command_queue.add_command(Command::Print);
+    while let Some(expr) = expr_queue.consume() {
+        expr_to_command(&mut command_queue, &expr);
+        command_queue.add_command(Command::Print);
+    }
 
     CommandConverter::new(command_queue).convert()
 }
 
-fn expr_to_command(mut command_queue: CommandQueue, expr: &Node) -> CommandQueue {
+fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
     if let &Node::Number(n) = expr {
         command_queue.add_command(Command::Push(n));
-        return command_queue;
+        return;
     }
 
     if let Node::BinaryOperator(t, a, b) = expr {
-        command_queue = expr_to_command(command_queue, a.as_ref());
-        command_queue = expr_to_command(command_queue, b.as_ref());
+        expr_to_command(command_queue, a.as_ref());
+        expr_to_command(command_queue, b.as_ref());
 
         match *t {
             BinaryOperatorType::Add => command_queue.add_command(Command::Add),
@@ -40,6 +42,4 @@ fn expr_to_command(mut command_queue: CommandQueue, expr: &Node) -> CommandQueue
             BinaryOperatorType::GreaterOrEqual => { command_queue.add_command(Command::Less); command_queue.add_command(Command::Not); }
         }
     }
-
-    command_queue
 }
