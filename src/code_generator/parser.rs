@@ -1,17 +1,17 @@
-use crate::code_generator::expression_parser::node::binary_operator_type::BinaryOperatorType;
-use crate::code_generator::expression_parser::node::Node;
+use crate::code_generator::parser::node::binary_operator_type::BinaryOperatorType;
+use crate::code_generator::parser::node::Node;
 use crate::tokenizer::reserved_token::ReservedToken;
 use crate::tokenizer::token_queue::TokenQueue;
 
 pub mod node;
 
-pub struct ExpressionParser {
+pub struct Parser {
     expr: TokenQueue,
 }
 
-impl ExpressionParser {
+impl Parser {
     pub fn new(expr: TokenQueue) -> Self {
-        ExpressionParser { expr }
+        Parser { expr }
     }
 
     pub fn parse(&mut self) -> Node {

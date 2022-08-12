@@ -1,13 +1,13 @@
 use crate::code_generator::command::Command;
 use crate::code_generator::command_converter::CommandConverter;
 use crate::code_generator::command_queue::CommandQueue;
-use crate::code_generator::expression_parser::ExpressionParser;
-use crate::code_generator::expression_parser::node::Node;
-use crate::code_generator::expression_parser::node::binary_operator_type::BinaryOperatorType;
+use crate::code_generator::parser::Parser;
+use crate::code_generator::parser::node::Node;
+use crate::code_generator::parser::node::binary_operator_type::BinaryOperatorType;
 use crate::tokenizer::token_queue::TokenQueue;
 
 pub fn generate_code(queue: TokenQueue) -> String {
-    let expr = ExpressionParser::new(queue).parse();
+    let expr = Parser::new(queue).parse();
 
     let mut command_queue = CommandQueue::new();
 
