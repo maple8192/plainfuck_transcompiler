@@ -16,7 +16,7 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
             '/' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Div) }),
             '(' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::OpenBracket) }),
             ')' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::CloseBracket) }),
-            '=' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Equal) }); p += 1; } else { return Err("".to_string()); }
+            '=' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Equal) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Assign) }); }
             '!' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::NotEqual) }); p += 1; } else { return Err("".to_string()); }
             '<' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::LessOrEqual) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Less) }); }
             '>' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::GreaterOrEqual) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Greater) }); }
