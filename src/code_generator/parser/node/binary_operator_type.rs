@@ -9,4 +9,5 @@ pub enum BinaryOperatorType {
     LessOrEqual,
     Greater,
     GreaterOrEqual,
+    Assign,
 }

@@ -31,13 +31,12 @@ impl Parser {
     }
 
     fn assign(&mut self) -> Node {
-        if let Ok(name) = self.program.consume_ident_token() {
-            if !self.program.consume_reserved_token(ReservedToken::Assign).unwrap() {
-                panic!("");
-            }
-            Node::Assign(name, Box::new(self.equality()))
+        let node = self.equality();
+
+        if self.program.consume_reserved_token(ReservedToken::Assign).unwrap() {
+            Node::BinaryOperator(BinaryOperatorType::Assign, Box::new(node), Box::new(self.equality()))
         } else {
-            self.equality()
+            node
         }
     }
 

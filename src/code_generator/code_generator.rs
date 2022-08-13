@@ -31,27 +31,32 @@ fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
         return;
     }
 
-    if let Node::Assign(name, content) = expr {
-        expr_to_command(command_queue, content.as_ref());
-        command_queue.add_command(Command::Assign(name.clone()));
-        return;
-    }
-
     if let Node::BinaryOperator(t, a, b) = expr {
-        expr_to_command(command_queue, a.as_ref());
-        expr_to_command(command_queue, b.as_ref());
+        if let BinaryOperatorType::Assign = *t {
+            if let Node::Variable(name) = a.as_ref() {
+                expr_to_command(command_queue, b.as_ref());
+                command_queue.add_command(Command::Assign(name.clone()));
+                return;
+            } else {
+                panic!("");
+            }
+        } else {
+            expr_to_command(command_queue, a.as_ref());
+            expr_to_command(command_queue, b.as_ref());
 
-        match *t {
-            BinaryOperatorType::Add => command_queue.add_command(Command::Add),
-            BinaryOperatorType::Sub => command_queue.add_command(Command::Sub),
-            BinaryOperatorType::Mul => command_queue.add_command(Command::Mul),
-            BinaryOperatorType::Div => command_queue.add_command(Command::Div),
-            BinaryOperatorType::Equal => command_queue.add_command(Command::Equal),
-            BinaryOperatorType::NotEqual => { command_queue.add_command(Command::Equal); command_queue.add_command(Command::Not); }
-            BinaryOperatorType::Less => command_queue.add_command(Command::Less),
-            BinaryOperatorType::LessOrEqual => { command_queue.add_command(Command::Greater); command_queue.add_command(Command::Not); }
-            BinaryOperatorType::Greater => command_queue.add_command(Command::Greater),
-            BinaryOperatorType::GreaterOrEqual => { command_queue.add_command(Command::Less); command_queue.add_command(Command::Not); }
+            match *t {
+                BinaryOperatorType::Add => command_queue.add_command(Command::Add),
+                BinaryOperatorType::Sub => command_queue.add_command(Command::Sub),
+                BinaryOperatorType::Mul => command_queue.add_command(Command::Mul),
+                BinaryOperatorType::Div => command_queue.add_command(Command::Div),
+                BinaryOperatorType::Equal => command_queue.add_command(Command::Equal),
+                BinaryOperatorType::NotEqual => { command_queue.add_command(Command::Equal); command_queue.add_command(Command::Not); }
+                BinaryOperatorType::Less => command_queue.add_command(Command::Less),
+                BinaryOperatorType::LessOrEqual => { command_queue.add_command(Command::Greater); command_queue.add_command(Command::Not); }
+                BinaryOperatorType::Greater => command_queue.add_command(Command::Greater),
+                BinaryOperatorType::GreaterOrEqual => { command_queue.add_command(Command::Less); command_queue.add_command(Command::Not); }
+                _ => (),
+            }
         }
     }
 }

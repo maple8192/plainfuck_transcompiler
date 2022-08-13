@@ -4,7 +4,6 @@ use crate::code_generator::parser::node::binary_operator_type::BinaryOperatorTyp
 
 pub enum Node {
     BinaryOperator(BinaryOperatorType, Box<Node>, Box<Node>),
-    Assign(String, Box<Node>),
     Variable(String),
     Number(u32),
 }
