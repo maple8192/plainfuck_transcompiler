@@ -103,6 +103,8 @@ impl Parser {
             let node = self.add();
             if !self.program.consume_reserved_token(ReservedToken::CloseBracket).unwrap() { panic!(""); }
             return node;
+        } else if let Ok(name) = self.program.consume_ident_token() {
+            return Node::Variable(name)
         }
 
         Node::Number(self.program.consume_number_token().unwrap())
