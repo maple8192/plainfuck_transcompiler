@@ -25,6 +25,12 @@ fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
         return;
     }
 
+    if let Node::Assign(name, content) = expr {
+        expr_to_command(command_queue, content.as_ref());
+        command_queue.add_command(Command::Assign(name.clone()));
+        return;
+    }
+
     if let Node::BinaryOperator(t, a, b) = expr {
         expr_to_command(command_queue, a.as_ref());
         expr_to_command(command_queue, b.as_ref());

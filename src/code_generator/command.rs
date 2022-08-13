@@ -9,4 +9,5 @@ pub enum Command {
     Less,
     Greater,
     Print,
+    Assign(String),
 }
