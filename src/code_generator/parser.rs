@@ -20,14 +20,20 @@ impl Parser {
         let mut expr_queue = ExpressionQueue::new();
 
         while !self.program.is_end() {
-            expr_queue.add(self.assign());
-
-            if !self.program.consume_reserved_token(ReservedToken::EndStatement).unwrap() {
-                panic!("");
-            }
+            expr_queue.add(self.statement());
         }
 
         expr_queue
+    }
+
+    fn statement(&mut self) -> Node {
+        let node = self.assign();
+
+        if !self.program.consume_reserved_token(ReservedToken::EndStatement).unwrap() {
+            panic!("");
+        }
+
+        node
     }
 
     fn assign(&mut self) -> Node {
