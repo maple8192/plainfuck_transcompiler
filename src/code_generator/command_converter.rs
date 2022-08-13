@@ -22,6 +22,7 @@ impl CommandConverter {
         while let Some(command) = self.queue.consume_command() {
             match command {
                 Command::Push(n) => self.push(&mut code, n),
+                Command::Copy(s) => self.copy(&mut code, s),
                 Command::Add => self.add(&mut code),
                 Command::Sub => self.sub(&mut code),
                 Command::Mul => self.mul(&mut code),
@@ -44,6 +45,17 @@ impl CommandConverter {
             code.push('+');
         }
         self.stack.push_back(self.new_address);
+        self.new_address += 1;
+    }
+
+    fn copy(&mut self, code: &mut String, name: String) {
+        let target = self.variables.get(&name).unwrap();
+        let result = self.new_address;
+        let temp = self.new_address + 1;
+
+        code.push_str(self.format(format!("({0})[({2})+({0})-]({2})[({1})+({0})+({2})-]", target, result, temp)).as_str());
+
+        self.stack.push_back(result);
         self.new_address += 1;
     }
 
