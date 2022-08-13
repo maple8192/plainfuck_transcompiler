@@ -1,5 +1,6 @@
 pub enum Command {
     Push(u32),
+    Copy(String),
     Add,
     Sub,
     Mul,

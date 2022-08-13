@@ -25,6 +25,11 @@ fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
         return;
     }
 
+    if let Node::Variable(name) = expr {
+        command_queue.add_command(Command::Copy(name.clone()));
+        return;
+    }
+
     if let Node::Assign(name, content) = expr {
         expr_to_command(command_queue, content.as_ref());
         command_queue.add_command(Command::Assign(name.clone()));
