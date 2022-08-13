@@ -33,10 +33,10 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
                 }
                 queue.add(Token { token_type: TokenType::Number(s.parse::<u32>().unwrap()) });
             }
-            'a'..='z' | 'A'..='Z' => {
+            'a'..='z' | 'A'..='Z' | '_' => {
                 let mut s = String::from(code.chars().nth(p).unwrap());
                 for i in (p + 1)..code.len() {
-                    if let 'a'..='z' | 'A'..='Z' = code.chars().nth(i).unwrap() {
+                    if let 'a'..='z' | 'A'..='Z' | '_' = code.chars().nth(i).unwrap() {
                         s.push(code.chars().nth(i).unwrap());
                     } else {
                         p = i - 1;
