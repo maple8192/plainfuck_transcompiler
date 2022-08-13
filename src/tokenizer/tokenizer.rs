@@ -41,6 +41,8 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
                     } else {
                         if s == "if".to_string() {
                             queue.add(Token { token_type: TokenType::Reserved(ReservedToken::If) });
+                        } else if s == "else".to_string() {
+                            queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Else) });
                         } else {
                             queue.add(Token { token_type: TokenType::Ident(s) });
                         }
