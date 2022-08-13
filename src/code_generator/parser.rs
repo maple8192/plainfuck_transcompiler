@@ -27,13 +27,35 @@ impl Parser {
     }
 
     fn statement(&mut self) -> Node {
-        let node = self.assign();
+        return if self.program.consume_reserved_token(ReservedToken::If).unwrap() {
+            if !self.program.consume_reserved_token(ReservedToken::OpenBracket).unwrap() {
+                panic!("");
+            }
 
-        if !self.program.consume_reserved_token(ReservedToken::EndStatement).unwrap() {
-            panic!("");
+            let condition = self.equality();
+
+            if !self.program.consume_reserved_token(ReservedToken::CloseBracket).unwrap() {
+                panic!("")
+            }
+
+            let statement0 = self.statement();
+
+            let statement1 = if self.program.consume_reserved_token(ReservedToken::Else).unwrap() {
+                Some(Box::new(self.statement()))
+            } else {
+                None
+            };
+
+            Node::If(Box::new(condition), Box::new(statement0), statement1)
+        } else {
+            let node = self.assign();
+
+            if !self.program.consume_reserved_token(ReservedToken::EndStatement).unwrap() {
+                panic!("");
+            }
+
+            node
         }
-
-        node
     }
 
     fn assign(&mut self) -> Node {
