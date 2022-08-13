@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::collections::vec_deque::VecDeque;
 use crate::code_generator::command::Command;
 use crate::code_generator::command_queue::CommandQueue;
@@ -5,13 +6,14 @@ use crate::code_generator::command_queue::CommandQueue;
 pub struct CommandConverter {
     queue: CommandQueue,
     stack: VecDeque<u32>,
+    variables: HashMap<String, u32>,
     current_pointer: u32,
     new_address: u32,
 }
 
 impl CommandConverter {
     pub fn new(command_queue: CommandQueue) -> Self {
-        CommandConverter { queue: command_queue, stack: VecDeque::new(), current_pointer: 0, new_address: 0 }
+        CommandConverter { queue: command_queue, stack: VecDeque::new(), variables: HashMap::new(), current_pointer: 0, new_address: 0 }
     }
 
     pub fn convert(&mut self) -> String {
@@ -29,6 +31,7 @@ impl CommandConverter {
                 Command::Less => self.less(&mut code),
                 Command::Greater => self.greater(&mut code),
                 Command::Print => self.print(&mut code),
+                Command::Assign(s) => self.assign(s),
             }
         }
 
@@ -141,6 +144,12 @@ impl CommandConverter {
         self.current_pointer = temp;
         self.stack.push_back(temp);
         self.new_address += 1;
+    }
+
+    fn assign(&mut self, name: String) {
+        let target = self.stack.pop_back().unwrap();
+
+        self.variables.insert(name, target);
     }
 
     fn format(&mut self, code: String) -> String {
