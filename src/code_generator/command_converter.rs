@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::collections::vec_deque::VecDeque;
 use crate::code_generator::command::Command;
 use crate::code_generator::command_queue::CommandQueue;
@@ -5,13 +6,14 @@ use crate::code_generator::command_queue::CommandQueue;
 pub struct CommandConverter {
     queue: CommandQueue,
     stack: VecDeque<u32>,
+    variables: HashMap<String, u32>,
     current_pointer: u32,
     new_address: u32,
 }
 
 impl CommandConverter {
     pub fn new(command_queue: CommandQueue) -> Self {
-        CommandConverter { queue: command_queue, stack: VecDeque::new(), current_pointer: 0, new_address: 0 }
+        CommandConverter { queue: command_queue, stack: VecDeque::new(), variables: HashMap::new(), current_pointer: 0, new_address: 0 }
     }
 
     pub fn convert(&mut self) -> String {
@@ -20,6 +22,7 @@ impl CommandConverter {
         while let Some(command) = self.queue.consume_command() {
             match command {
                 Command::Push(n) => self.push(&mut code, n),
+                Command::Copy(s) => self.copy(&mut code, s),
                 Command::Add => self.add(&mut code),
                 Command::Sub => self.sub(&mut code),
                 Command::Mul => self.mul(&mut code),
@@ -29,6 +32,7 @@ impl CommandConverter {
                 Command::Less => self.less(&mut code),
                 Command::Greater => self.greater(&mut code),
                 Command::Print => self.print(&mut code),
+                Command::Assign(s) => self.assign(s),
             }
         }
 
@@ -41,6 +45,17 @@ impl CommandConverter {
             code.push('+');
         }
         self.stack.push_back(self.new_address);
+        self.new_address += 1;
+    }
+
+    fn copy(&mut self, code: &mut String, name: String) {
+        let target = self.variables.get(&name).unwrap();
+        let result = self.new_address;
+        let temp = self.new_address + 1;
+
+        code.push_str(self.format(format!("({0})[({2})+({0})-]({2})[({1})+({0})+({2})-]", target, result, temp)).as_str());
+
+        self.stack.push_back(result);
         self.new_address += 1;
     }
 
@@ -136,10 +151,17 @@ impl CommandConverter {
         let target = self.stack.pop_back().unwrap();
         let temp = self.new_address;
 
-        code.push_str(self.format(format!("({0})[({1})+({0})-]({1})>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<", target, temp)).as_str());
+        code.push_str(self.format(format!("({0})[({1})+({0})-]({1})>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]++++++++++++++++++++++++++++++++.[-]<<[-<+>]<", target, temp)).as_str());
 
         self.current_pointer = temp;
+        self.stack.push_back(temp);
         self.new_address += 1;
+    }
+
+    fn assign(&mut self, name: String) {
+        let target = self.stack.pop_back().unwrap();
+
+        self.variables.insert(name, target);
     }
 
     fn format(&mut self, code: String) -> String {

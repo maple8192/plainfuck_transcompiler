@@ -12,4 +12,6 @@ pub enum ReservedToken {
     LessOrEqual,
     Greater,
     GreaterOrEqual,
+    Assign,
+    EndStatement,
 }

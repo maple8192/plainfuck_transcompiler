@@ -16,10 +16,11 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
             '/' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Div) }),
             '(' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::OpenBracket) }),
             ')' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::CloseBracket) }),
-            '=' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Equal) }); p += 1; } else { return Err("".to_string()); }
+            '=' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Equal) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Assign) }); }
             '!' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::NotEqual) }); p += 1; } else { return Err("".to_string()); }
             '<' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::LessOrEqual) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Less) }); }
             '>' => if code.chars().nth(p + 1).unwrap() == '=' { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::GreaterOrEqual) }); p += 1; } else { queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Greater) }); }
+            ';' => queue.add(Token { token_type: TokenType::Reserved(ReservedToken::EndStatement) }),
             '0'..='9' => {
                 let mut s = String::from(code.chars().nth(p).unwrap());
                 for i in (p + 1)..code.len() {
@@ -31,6 +32,18 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
                     }
                 }
                 queue.add(Token { token_type: TokenType::Number(s.parse::<u32>().unwrap()) });
+            }
+            'a'..='z' | 'A'..='Z' | '_' => {
+                let mut s = String::from(code.chars().nth(p).unwrap());
+                for i in (p + 1)..code.len() {
+                    if let 'a'..='z' | 'A'..='Z' | '_' = code.chars().nth(i).unwrap() {
+                        s.push(code.chars().nth(i).unwrap());
+                    } else {
+                        p = i - 1;
+                        break;
+                    }
+                }
+                queue.add(Token { token_type: TokenType::Ident(s) });
             }
             _ => return Err("".to_string()),
         }

@@ -1,8 +1,3 @@
-pub enum Expression {
-    BinaryOperator(BinaryOperatorType, Box<Expression>, Box<Expression>),
-    Number(u32),
-}
-
 pub enum BinaryOperatorType {
     Add,
     Sub,
@@ -14,4 +9,5 @@ pub enum BinaryOperatorType {
     LessOrEqual,
     Greater,
     GreaterOrEqual,
+    Assign,
 }
