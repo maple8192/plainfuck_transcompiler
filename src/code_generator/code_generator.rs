@@ -13,8 +13,9 @@ pub fn generate_code(queue: TokenQueue) -> String {
 
     while let Some(expr) = expr_queue.consume() {
         expr_to_command(&mut command_queue, &expr);
-        command_queue.add_command(Command::Print);
     }
+
+    command_queue.add_command(Command::Print);
 
     CommandConverter::new(command_queue).convert()
 }
