@@ -20,7 +20,7 @@ impl Parser {
         let mut expr_queue = ExpressionQueue::new();
 
         while !self.program.is_end() {
-            expr_queue.add(self.equality());
+            expr_queue.add(self.assign());
 
             if !self.program.consume_reserved_token(ReservedToken::EndStatement).unwrap() {
                 panic!("");
@@ -28,6 +28,14 @@ impl Parser {
         }
 
         expr_queue
+    }
+
+    fn assign(&mut self) -> Node {
+        if let Ok(name) = self.program.consume_ident_token() {
+            Node::Assign(name, Box::new(self.equality()))
+        } else {
+            self.equality()
+        }
     }
 
     fn equality(&mut self) -> Node {

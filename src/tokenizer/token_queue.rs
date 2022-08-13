@@ -33,6 +33,20 @@ impl TokenQueue {
         }
     }
 
+    pub fn consume_ident_token(&mut self) -> Result<String, ()> {
+        let front = self.tokens.front();
+
+        if let Some(token) = front {
+            if let TokenType::Ident(name) = &token.token_type {
+                let ret = name.clone();
+                self.tokens.pop_front();
+                return Ok(ret);
+            }
+        }
+
+        Err(())
+    }
+
     pub fn consume_number_token(&mut self) -> Result<u32, ()> {
         let front = self.tokens.front();
 
