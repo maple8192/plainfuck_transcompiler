@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::collections::HashMap;
 use std::collections::vec_deque::VecDeque;
 use crate::code_generator::command::Command;
@@ -16,7 +17,7 @@ impl CommandConverter {
         CommandConverter { queue: command_queue, stack: VecDeque::new(), variables: HashMap::new(), current_pointer: 0, new_address: 0 }
     }
 
-    pub fn convert(&mut self) -> String {
+    pub fn convert(&mut self) -> (String, u32, u32) {
         let mut code = String::new();
 
         while let Some(command) = self.queue.consume_command() {
@@ -32,11 +33,12 @@ impl CommandConverter {
                 Command::Less => self.less(&mut code),
                 Command::Greater => self.greater(&mut code),
                 Command::Print => self.print(&mut code),
-                Command::Assign(s) => self.assign(s),
+                Command::Assign(s) => self.assign(&mut code, s),
+                Command::If(c0, c1) => self.if_statement(&mut code, c0, c1),
             }
         }
 
-        code
+        (code, self.current_pointer, self.new_address)
     }
 
     fn push(&mut self, code: &mut String, num: u32) {
@@ -158,10 +160,42 @@ impl CommandConverter {
         self.new_address += 1;
     }
 
-    fn assign(&mut self, name: String) {
+    fn assign(&mut self, code: &mut String, name: String) {
         let target = self.stack.pop_back().unwrap();
 
-        self.variables.insert(name, target);
+        if self.variables.contains_key(&name) {
+            code.push_str(self.format(format!("({1})[-]({0})[({1})+({0})-]", target, self.variables.get(&name).unwrap())).as_str());
+        } else {
+            self.variables.insert(name, target);
+        }
+    }
+
+    fn if_statement(&mut self, code: &mut String, a: CommandQueue, b: CommandQueue) {
+        let condition = self.stack.pop_back().unwrap();
+        let temp0 = self.new_address;
+        let temp1 = self.new_address + 1;
+        code.push_str(self.format(format!("({0})[({2})+({0})-]({2})[({1})+({0})+({2})-]({2})+({1})[", condition, temp0, temp1)).as_str());
+
+        self.new_address += 2;
+
+        let prev_stack = self.stack.clone();
+        let prev_variables = self.variables.clone();
+        let prev_pointer = self.current_pointer;
+        let prev_new_address = self.new_address;
+
+        let when_true = CommandConverter { queue: a, stack: prev_stack.clone(), variables: prev_variables.clone(), current_pointer: prev_pointer, new_address: prev_new_address }.convert();
+        self.current_pointer = when_true.1;
+        self.new_address = when_true.2;
+        code.push_str(self.format(format!("{0}({2})-({1})[-]]", when_true.0, temp0, temp1)).as_str());
+
+        code.push_str(self.format(format!("({0})[", temp1)).as_str());
+
+        let when_false = CommandConverter { queue: b, stack: prev_stack.clone(), variables: prev_variables.clone(), current_pointer: prev_pointer, new_address: prev_new_address }.convert();
+        self.current_pointer = when_false.1;
+        self.new_address = when_false.2;
+        code.push_str(self.format(format!("{0}({1})[-]]", when_false.0, temp1)).as_str());
+
+        self.new_address = max(when_true.2, when_false.2);
     }
 
     fn format(&mut self, code: String) -> String {
