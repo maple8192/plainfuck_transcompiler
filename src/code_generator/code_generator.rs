@@ -17,7 +17,7 @@ pub fn generate_code(queue: TokenQueue) -> String {
 
     command_queue.add_command(Command::Print);
 
-    CommandConverter::new(command_queue).convert()
+    CommandConverter::new(command_queue).convert().0
 }
 
 fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
@@ -29,6 +29,16 @@ fn expr_to_command(command_queue: &mut CommandQueue, expr: &Node) {
     if let Node::Variable(name) = expr {
         command_queue.add_command(Command::Copy(name.clone()));
         return;
+    }
+
+    if let Node::If(c, a, b) = expr {
+        expr_to_command(command_queue, c.as_ref());
+
+        let mut command_queue0 = CommandQueue::new();
+        let mut command_queue1 = CommandQueue::new();
+        expr_to_command(&mut command_queue0, a.as_ref());
+        if let Some(x) = b.as_ref() { expr_to_command(&mut command_queue1, x); }
+        command_queue.add_command(Command::If(command_queue0, command_queue1));
     }
 
     if let Node::BinaryOperator(t, a, b) = expr {

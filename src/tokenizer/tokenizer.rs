@@ -39,11 +39,17 @@ pub fn tokenize(code: String) -> Result<TokenQueue, String> {
                     if let 'a'..='z' | 'A'..='Z' | '_' = code.chars().nth(i).unwrap() {
                         s.push(code.chars().nth(i).unwrap());
                     } else {
+                        if s == "if".to_string() {
+                            queue.add(Token { token_type: TokenType::Reserved(ReservedToken::If) });
+                        } else if s == "else".to_string() {
+                            queue.add(Token { token_type: TokenType::Reserved(ReservedToken::Else) });
+                        } else {
+                            queue.add(Token { token_type: TokenType::Ident(s) });
+                        }
                         p = i - 1;
                         break;
                     }
                 }
-                queue.add(Token { token_type: TokenType::Ident(s) });
             }
             _ => return Err("".to_string()),
         }

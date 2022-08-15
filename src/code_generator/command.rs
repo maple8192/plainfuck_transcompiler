@@ -1,3 +1,5 @@
+use crate::code_generator::command_queue::CommandQueue;
+
 pub enum Command {
     Push(u32),
     Copy(String),
@@ -11,4 +13,5 @@ pub enum Command {
     Greater,
     Print,
     Assign(String),
+    If(CommandQueue, CommandQueue),
 }

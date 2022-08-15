@@ -5,5 +5,6 @@ use crate::code_generator::parser::node::binary_operator_type::BinaryOperatorTyp
 pub enum Node {
     BinaryOperator(BinaryOperatorType, Box<Node>, Box<Node>),
     Variable(String),
+    If(Box<Node>, Box<Node>, Option<Box<Node>>),
     Number(u32),
 }
