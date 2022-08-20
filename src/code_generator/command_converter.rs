@@ -98,7 +98,7 @@ impl CommandConverter {
         let temp2 = self.new_address + 2;
         let temp3 = self.new_address + 3;
 
-        code.push_str(self.format(format!("({0})[({2})+({0})-]({1})[({3})+({1})-]({4})[->-[>+>>]>[[-<+>]+>+>>]<<<<<]>>-", first, second, temp0, temp1, temp2)).as_str());
+        code.push_str(self.format(format!("({0})[({2})+({0})-]({1})[({3})+({1})-]({4})+({2})[->-[>+>>]>[[-<+>]+>+>>]<<<<<]>>-", first, second, temp0, temp1, temp2)).as_str());
 
         self.current_pointer = temp2;
         self.stack.push_back(temp3);
